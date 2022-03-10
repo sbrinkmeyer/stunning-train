@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+from ast import parse
+from turtle import title
+import tmdbsimple as tmdb
+import datetime
+import argparse
+import os
+from pathlib import Path
+
+
+parser = argparse.ArgumentParser(description="make a plex compatible folder name for movies or tv shows")
+parser.add_argument("-q", "--query", help="what to search for")
+args = parser.parse_args()
+if args.query:
+    query_string = args.query
+else:
+    query_string = input('Query String: ')
+    
+
+tmdb.API_KEY ='fdb3ac55490a1827c64d9abe1b9c9fd0'
+search = tmdb.Search()
+responses = search.movie(query=query_string)
+name_list = list()
+
+#for show in search.results:
+for movie in range(0, len(search.results)):
+    show = search.results[movie]
+    try:
+        show_year = str(datetime.datetime.fromisoformat(show['release_date']).year)
+    except:
+        print("something went wrong: ")
+        show_year = str(1970)
+    
+    show_text = "{} ({}) {{tmdb-{}}}".format( show['title'], show_year, show['id'])
+    #    print( "{}) {}".format(bob+1, show_text.replace(':','').replace('\'','') ))
+    clean_show_text =  show_text.replace(':','').replace('\'','')
+    name_list.append(clean_show_text)
+
+for i in range(len(name_list)):
+  print("{}) {}".format(i+1, name_list[i]) )
+
+item_index = input('which name number?: ')
+print( name_list[int(item_index)-1])
+parent_dir="/home/scottb/Videos"
+path = os.path.join(parent_dir, name_list[int(item_index)-1])
+os.mkdir(path)
+the_file = os.path.join(path, name_list[int(item_index)-1] + ".mkv")
+os.mknod(the_file)

@@ -1,0 +1,4 @@
+#!/bin/bash
+source /home/scottb/source/tmbrnamer/.venv/bin/activate
+/home/scottb/source/tmbrnamer/movie -q "$@"
+deactivate
