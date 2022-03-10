@@ -16,7 +16,7 @@ else:
     query_string = input('Query String: ')
     
 
-tmdb.API_KEY ='fdb3ac55490a1827c64d9abe1b9c9fd0'
+tmdb.API_KEY ='key'
 search = tmdb.Search()
 responses = search.tv(query=query_string)
 name_dict = dict()
