@@ -15,8 +15,8 @@ if args.query:
 else:
     query_string = input('Query String: ')
     
+tmdb.API_KEY = os.environ['TMDB_API_KEY']
 
-tmdb.API_KEY ='key'
 search = tmdb.Search()
 responses = search.tv(query=query_string)
 name_dict = dict()
