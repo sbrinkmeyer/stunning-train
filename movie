@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-from ast import parse
-from turtle import title
 import tmdbsimple as tmdb
 import datetime
 import argparse
 import os
-from pathlib import Path
 
 
 parser = argparse.ArgumentParser(description="make a plex compatible folder name for movies or tv shows")
