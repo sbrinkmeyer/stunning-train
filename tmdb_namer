@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+from hashlib import new
+from importlib.resources import path
+import tmdbsimple as tmdb
+import datetime
+import os
+import pathlib
+
+# parser = argparse.ArgumentParser(description="make a plex compatible folder name for movies or tv shows")
+# parser.add_argument("-q", "--query", help="what to search for")
+# args = parser.parse_args()
+# if args.query:
+#     query_string = args.query
+# else:
+#     query_string = input('Query String: ')
+
+original_folder_path = os.getcwd()
+original_folder_name = os.path.basename(original_folder_path)
+root_path = original_folder_path.replace(original_folder_name,'')
+print(root_path)
+folder_movie_name = original_folder_name.replace('_',' ').replace('.',' ').replace('(','').replace(')','').replace('}','').replace('{','')
+
+print(folder_movie_name)
+short_movie_name=str()
+for a_word in folder_movie_name.split():
+    print(a_word)
+    if a_word.isnumeric():
+        break
+    short_movie_name+= "{} ".format(a_word)
+print (short_movie_name)
+
+#short_movie_name = "{} {} {}".format(folder_movie_name.split()[0],\
+#    folder_movie_name.split()[1], folder_movie_name.split()[2])
+print(short_movie_name)
+
+tmdb.API_KEY = os.environ['TMDB_API_KEY']
+
+search = tmdb.Search()
+responses = search.movie(query=short_movie_name)
+name_list = list()
+
+#for show in search.results:
+for movie in range(0, len(search.results)):
+    show = search.results[movie]
+    try:
+        show_year = str(datetime.datetime.fromisoformat(show['release_date']).year)
+    except:
+        print("something went wrong: ")
+        show_year = str(1970)
+    
+    show_text = "{} ({}) {{tmdb-{}}}".format( show['title'], show_year, show['id'])
+    #    print( "{}) {}".format(bob+1, show_text.replace(':','').replace('\'','') ))
+    clean_show_text =  show_text.replace(':','').replace('\'','')
+    name_list.append(clean_show_text)
+
+for i in range(len(name_list)):
+  print("{}) {}".format(i+1, name_list[i]) )
+
+item_index = input('which name number?: ')
+print( name_list[int(item_index)-1])
+
+movies = os.listdir(os.getcwd())
+for movie_file in movies:
+    print("in {} looking at {}".format(os.getcwd(),movie_file))
+    if pathlib.Path(movie_file).is_file():
+        if pathlib.Path(movie_file).suffix in ('.avi', '.divx', '.m4v', '.mkv', '.mp4'):
+            print(pathlib.Path(movie_file).name)
+            original_extension = pathlib.Path(movie_file).suffix
+            os.rename(pathlib.Path(movie_file).name, "{}{}".format(name_list[int(item_index)-1],original_extension))
+        else:
+            if ( 'y' == input("{} - delete? [y|n] : ".format(pathlib.Path(movie_file))).lower() ):
+                os.remove(pathlib.Path(movie_file))
+
+# print(root_path)
+os.chdir(root_path)
+
+# print(os.getcwd())
+
+new_path = os.path.join(root_path,name_list[int(item_index)-1])
+# print(new_path)
+os.rename(original_folder_path, new_path )
+# os.chdir(new_path)
+
